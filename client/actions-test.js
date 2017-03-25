@@ -3,7 +3,7 @@ import expect from 'expect';
 import {
     loadProducts, 
     fetchProductsRequest, 
-    fetchProductsSuccess, 
+    fetchProductsSuccess,
     fetchProductsFailure,
     changeProductsFilter,
     fetchAdRequest,

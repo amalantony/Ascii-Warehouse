@@ -25,22 +25,23 @@ State:
         runningCount:  //  count in multiples of 20 to display the Ad
         isFetching: true or false // used by UI to toggle loading or not,
         lastUpdated: // timestamp
-        advertisement: {
+        ads: {
             previousAd: // id of the last shown Ad,
-            isFetching: // status of the ad fetch
+            ads: [] // list of all ads
         }
     },
     activeFilter: SIZE | PRICE | ID
 }
 
 Actions: 
-    LOAD_PRODUCTS (?) -> Load products on page load & scoll
+    CHANGE_PRODUCT_FILTER {filter: 'SIZE'}
+    
+    LOAD_PRODUCTS (?) -> Load products & ads on page load & scoll
+
+    // seprate events to decouple network requests from UI Events
     FETCH_PRODUCTS_REQUEST
     FETCH_PRODUCTS_FAILURE
     FETCH_PRODUCTS_SUCCESS
-    CHANGE_PRODUCT_FILTER {filter: 'SIZE'}
-
-    PREFETCH_PRODUCTS_DATA
 
     FETCH_AD_REQUEST
     FETCH_AD_FAILURE

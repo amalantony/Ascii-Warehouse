@@ -1,4 +1,10 @@
+/* 
+*
+* TODO: Remove these tests and move them to a test runner!
+*
+*/
 import './actions-test.js';
+import './reducers-test.js';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -44,6 +50,30 @@ const ProductRow = () => {
     );
 };
 
+const Spinner = () => {
+    return (
+        <div className="container">
+            <div className="row">
+                <div className="twelve columns spinner-container">
+                    <img className="spinner" src="images/spinner.svg"/>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const EndOfCatalog = () => {
+    return (
+        <div className="container">
+            <div className="row">
+                <div className="twelve columns end-of-catalog-status">
+                    ~ End of Catalog ~
+                </div>
+            </div>
+        </div>
+    );
+};
+
 const ProductGrid = () => {
     return (
        <div>
@@ -52,6 +82,8 @@ const ProductGrid = () => {
             <ProductRow/>
             <ProductRow/>
             <ProductRow/>
+            <Spinner/>
+            <EndOfCatalog/>
         </div>
     );
 };
