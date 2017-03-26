@@ -24,6 +24,7 @@ State:
         prefetch: [], // set of all prefetched results
         runningCount:  //  count in multiples of 20 to display the Ad
         isFetching: true or false // used by UI to toggle loading or not,
+        isCatalogEnd: true or false // used by UI to toggle showing of of catalog message
         lastUpdated: // timestamp
         ads: {
             previousAd: // id of the last shown Ad,
@@ -42,6 +43,8 @@ Actions:
     FETCH_PRODUCTS_REQUEST
     FETCH_PRODUCTS_FAILURE
     FETCH_PRODUCTS_SUCCESS
+
+    CATALOG_END -> Dispatched when the request to server returned no results {end: true}
 
     FETCH_AD_REQUEST
     FETCH_AD_FAILURE

@@ -1,28 +1,28 @@
 .listing-item {
-    height: 250px;
-    border-radius: 5%;
-    border: solid;
-    margin-bottom: 30px;
+  height: 250px;
+  border-radius: 5%;
+  border: solid;
+  margin-bottom: 30px;
 }
 
 .end-of-catalog-status {
-    background: #666060;
-    color: white;
-    margin-bottom: 10px;
-    height: 50px;
-    line-height: 50px;
-    font-size: 150%;
-    text-align:center; 
+  background: #666060;
+  color: white;
+  margin-bottom: 10px;
+  height: 50px;
+  line-height: 50px;
+  font-size: 150%;
+  text-align: center;
 }
 
 .spinner-container {
-    display: flex;
-    height: 60px;
-    background-color: white;
+  display: flex;
+  height: 60px;
+  background-color: white;
 }
 
 .spinner {
-    width: 50px;
-    height: 50px; 
-    margin: auto;  
+  width: 50px;
+  height: 50px;
+  margin: auto;
 }
