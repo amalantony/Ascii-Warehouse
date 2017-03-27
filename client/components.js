@@ -66,19 +66,41 @@ export const EndOfCatalog = () => {
   );
 };
 
-export const ProductGrid = () => {
-  return (
-    <div>
-      <TitleBar />
-      <SortFilter />
-      <ProductRow />
-      <ProductRow />
-      <ProductRow />
-      <Spinner />
-      <EndOfCatalog />
-    </div>
-  );
-};
+class ProductGrid extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      pollingIntervalId: null
+    };
+  }
+  handleScroll() {
+    console.log("Scrolled!");
+  }
+  fetchProducts() {
+    /* keep track of skip and limit */
+    console.log("fetching results");
+  }
+  componentDidMount() {
+    this.fetchProducts(); // do an initial fetch on component mount
+    window.addEventListener("scroll", this.handleScroll);
+  }
+  componentWillUnmount() {
+    window.removeEventListener("scroll", this.handleScroll);
+  }
+  render() {
+    return (
+      <div>
+        <TitleBar />
+        <SortFilter />
+        <ProductRow />
+        <ProductRow />
+        <ProductRow />
+        <Spinner />
+        <EndOfCatalog />
+      </div>
+    );
+  }
+}
 
 export const SortFilter = () => {
   return (

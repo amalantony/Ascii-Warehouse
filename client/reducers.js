@@ -22,10 +22,16 @@ export const products = (
   },
   action
 ) => {
+  console.log("Got action type:", action.type);
   switch (action.type) {
     case LOAD_PRODUCTS:
       /*
-     *   TODO: LOAD_PRODUCTS must load ads too!
+     *   TODO: LOAD_PRODUCTS must load ads (Actually I think this should belong as a selector inside the component, not here!)
+     *      Involves dealing with runningCount, also merge the common functionality of LOAD_PRODUCTS with that of inital Load from 
+     *      FETCH_PRODUCTS_REQUEST (consider the 2 options below):
+     *        - Have a determineRunningCount() method that accounts for ads etc in state.items to computer the running count & 
+     *        - another method that does merging state.items & state.prefetchedItems with ads in between. This functionality might belong 
+     *          to a selector with a library like react reselect, not sure though.
      */
       return Object.assign({}, state, {
         items: [...state.items, ...state.prefetchedItems],
@@ -46,14 +52,23 @@ export const products = (
       });
 
     case FETCH_PRODUCTS_SUCCESS:
-      return Object.assign({}, state, {
-        isFetching: false,
-        prefetchedItems: action.items
-      });
-
+      if (action.initialLoad) {
+        return Object.assign({}, state, {
+          isFetching: false,
+          isCatalogEnd: false,
+          items: action.items,
+          runningCount: state.runningCount + action.items.length
+        });
+      } else {
+        return Object.assign({}, state, {
+          isFetching: false,
+          isCatalogEnd: false,
+          prefetchedItems: action.items
+        });
+      }
     case CATALOG_END:
       return Object.assign({}, state, {
-        isCatalogEnd: action.end
+        isCatalogEnd: true
       });
 
     default:
@@ -67,7 +82,10 @@ export const ads = (
     items: []
   },
   action
-) => {};
+) => {
+  switch (action.type) {
+  }
+};
 
 export const changeFilter = (state = "SORT_BY_ID", action) => {
   switch (action.type) {

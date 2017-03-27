@@ -3,6 +3,8 @@ Design Goals:
 - Keep the app as functional & modular as possible (React components must be functional as far as possible) - what are the tradeoffs
 - Using an external library to generate the scoll to bottom event (to keep code clean)
 
+- Explain why the choice was made for Redux
+
 
 
 Component List: 
@@ -22,7 +24,7 @@ State:
     products: {
         list: [], //  list of all the products,
         prefetch: [], // set of all prefetched results
-        runningCount:  //  count in multiples of 20 to display the Ad
+        runningCount:  //  count in multiples of 20 to display the Ad (this might not be required if you use a selector instead)
         isFetching: true or false // used by UI to toggle loading or not,
         isCatalogEnd: true or false // used by UI to toggle showing of of catalog message
         lastUpdated: // timestamp
@@ -34,12 +36,14 @@ State:
     activeFilter: SIZE | PRICE | ID
 }
 
-Actions: 
+Actions:
+    INITIALISE_APP -> First event, fetches the intial bunch of products to show on page load 
+
     CHANGE_PRODUCT_FILTER {filter: 'SIZE'}
     
     LOAD_PRODUCTS (?) -> Load products & ads on page load & scoll
 
-    // seprate events to decouple network requests from UI Events
+    // seperate events to decouple network requests from UI Events
     FETCH_PRODUCTS_REQUEST
     FETCH_PRODUCTS_FAILURE
     FETCH_PRODUCTS_SUCCESS

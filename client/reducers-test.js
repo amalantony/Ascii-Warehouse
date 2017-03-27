@@ -62,8 +62,7 @@ expect(
       prefetchedItems: []
     },
     {
-      type: CATALOG_END,
-      end: true
+      type: CATALOG_END
     }
   )
 ).toEqual({
@@ -76,28 +75,9 @@ expect(
 expect(
   products(
     {
-      isFetching: false,
-      isCatalogEnd: true,
-      items: [{ foo: "baz" }],
-      prefetchedItems: []
-    },
-    {
-      type: CATALOG_END,
-      end: false
-    }
-  )
-).toEqual({
-  isFetching: false,
-  isCatalogEnd: false,
-  items: [{ foo: "baz" }],
-  prefetchedItems: []
-});
-
-expect(
-  products(
-    {
       isFetching: true,
       items: [{ foo: "baz" }],
+      isCatalogEnd: false,
       prefetchedItems: []
     },
     {
@@ -107,6 +87,50 @@ expect(
   )
 ).toEqual({
   isFetching: false,
+  isCatalogEnd: false,
+  items: [{ foo: "baz" }],
+  prefetchedItems: [{ joo: "jaz" }]
+});
+
+expect(
+  products(
+    {
+      isFetching: true,
+      items: [],
+      isCatalogEnd: true,
+      prefetchedItems: [],
+      runningCount: 0
+    },
+    {
+      type: FETCH_PRODUCTS_SUCCESS,
+      initialLoad: true,
+      items: [{ foo: "baz" }, { joo: "jaz" }]
+    }
+  )
+).toEqual({
+  isFetching: false,
+  isCatalogEnd: false,
+  items: [{ foo: "baz" }, { joo: "jaz" }],
+  runningCount: 2,
+  prefetchedItems: []
+});
+
+expect(
+  products(
+    {
+      isFetching: true,
+      items: [{ foo: "baz" }],
+      isCatalogEnd: true,
+      prefetchedItems: []
+    },
+    {
+      type: FETCH_PRODUCTS_SUCCESS,
+      items: [{ joo: "jaz" }]
+    }
+  )
+).toEqual({
+  isFetching: false,
+  isCatalogEnd: false,
   items: [{ foo: "baz" }],
   prefetchedItems: [{ joo: "jaz" }]
 });

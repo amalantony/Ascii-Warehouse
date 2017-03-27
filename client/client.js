@@ -7,7 +7,8 @@ import "./actions-test.js";
 import "./reducers-test.js";
 import { AsciiWareHouseApp } from "./components.js";
 import reducer from "./reducers.js";
-import productSaga from "./sagas.js";
+import { productSaga } from "./sagas.js";
+import { fetchProductsRequest } from "./actions.js";
 
 import React from "react";
 import ReactDOM from "react-dom";
@@ -20,3 +21,5 @@ const store = createStore(reducer, applyMiddleware(sagaMiddleWare));
 sagaMiddleWare.run(productSaga);
 
 ReactDOM.render(<AsciiWareHouseApp />, document.getElementById("root"));
+
+store.dispatch(fetchProductsRequest({ sort: "id", skip: 0, limit: 12 }, true));

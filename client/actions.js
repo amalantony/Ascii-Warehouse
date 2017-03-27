@@ -1,28 +1,33 @@
 export const LOAD_PRODUCTS = "LOAD_PRODUCTS";
 export const loadProducts = () => {
   return {
-    type: "LOAD_PRODUCTS"
+    type: LOAD_PRODUCTS
   };
 };
 
 export const FETCH_PRODUCTS_REQUEST = "FETCH_PRODUCTS_REQUEST";
-export const fetchProductsRequest = () => {
+export const fetchProductsRequest = (filter, initialLoad = false) => {
   return {
-    type: FETCH_PRODUCTS_REQUEST
+    type: FETCH_PRODUCTS_REQUEST,
+    filter,
+    initialLoad
   };
 };
 
 export const FETCH_PRODUCTS_FAILURE = "FETCH_PRODUCTS_FAILURE";
-export const fetchProductsFailure = () => {
+export const fetchProductsFailure = error => {
   return {
-    type: FETCH_PRODUCTS_FAILURE
+    type: FETCH_PRODUCTS_FAILURE,
+    error
   };
 };
 
 export const FETCH_PRODUCTS_SUCCESS = "FETCH_PRODUCTS_SUCCESS";
-export const fetchProductsSuccess = () => {
+export const fetchProductsSuccess = (items, initialLoad) => {
   return {
-    type: FETCH_PRODUCTS_SUCCESS
+    type: FETCH_PRODUCTS_SUCCESS,
+    items,
+    initialLoad
   };
 };
 
@@ -34,10 +39,9 @@ export const changeProductsFilter = () => {
 };
 
 export const CATALOG_END = "CATALOG_END";
-export const catalogEnd = end => {
+export const catalogEnd = () => {
   return {
-    type: CATALOG_END,
-    end
+    type: CATALOG_END
   };
 };
 

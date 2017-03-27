@@ -16,25 +16,33 @@ expect(loadProducts()).toEqual({
   type: "LOAD_PRODUCTS"
 });
 
-expect(fetchProductsRequest()).toEqual({
-  type: "FETCH_PRODUCTS_REQUEST"
+expect(fetchProductsRequest({ sort: "id", skip: 10, limit: 20 })).toEqual({
+  type: "FETCH_PRODUCTS_REQUEST",
+  filter: {
+    sort: "id",
+    skip: 10,
+    limit: 20
+  },
+  initialLoad: false
 });
 
-expect(fetchProductsSuccess()).toEqual({
-  type: "FETCH_PRODUCTS_SUCCESS"
+expect(fetchProductsSuccess([{ foo: "baz" }], false)).toEqual({
+  type: "FETCH_PRODUCTS_SUCCESS",
+  items: [{ foo: "baz" }],
+  initialLoad: false
 });
 
-expect(fetchProductsFailure()).toEqual({
-  type: "FETCH_PRODUCTS_FAILURE"
+expect(fetchProductsFailure(new Error("ERR_TEST"))).toEqual({
+  type: "FETCH_PRODUCTS_FAILURE",
+  error: new Error("ERR_TEST")
 });
 
 expect(changeProductsFilter()).toEqual({
   type: "CHANGE_PRODUCTS_FILTER"
 });
 
-expect(catalogEnd(true)).toEqual({
-  type: "CATALOG_END",
-  end: true
+expect(catalogEnd()).toEqual({
+  type: "CATALOG_END"
 });
 
 expect(fetchAdRequest()).toEqual({
