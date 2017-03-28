@@ -18,6 +18,11 @@ export const products = (
     isCatalogEnd: false,
     items: [],
     prefetchedItems: [],
+    queryParams: {
+      sort: "id",
+      skip: 0,
+      limit: 15
+    },
     runningCount: 0
   },
   action
@@ -32,6 +37,7 @@ export const products = (
      *        - Have a determineRunningCount() method that accounts for ads etc in state.items to computer the running count & 
      *        - another method that does merging state.items & state.prefetchedItems with ads in between. This functionality might belong 
      *          to a selector with a library like react reselect, not sure though.
+     *        - This means, runningCount can be gotten rid off
      */
       return Object.assign({}, state, {
         items: [...state.items, ...state.prefetchedItems],
@@ -52,20 +58,17 @@ export const products = (
       });
 
     case FETCH_PRODUCTS_SUCCESS:
-      if (action.initialLoad) {
-        return Object.assign({}, state, {
-          isFetching: false,
-          isCatalogEnd: false,
-          items: action.items,
-          runningCount: state.runningCount + action.items.length
-        });
-      } else {
-        return Object.assign({}, state, {
-          isFetching: false,
-          isCatalogEnd: false,
-          prefetchedItems: action.items
-        });
-      }
+      return Object.assign({}, state, {
+        isFetching: false,
+        isCatalogEnd: false,
+        queryParams: {
+          sort: action.options.sort,
+          skip: action.options.skip,
+          limit: action.options.limit
+        },
+        prefetchedItems: action.items
+      });
+
     case CATALOG_END:
       return Object.assign({}, state, {
         isCatalogEnd: true
@@ -84,19 +87,21 @@ export const ads = (
   action
 ) => {
   switch (action.type) {
-  }
-};
-
-export const changeFilter = (state = "SORT_BY_ID", action) => {
-  switch (action.type) {
-    case CHANGE_PRODUCTS_FILTER:
-      return action.filter;
     default:
       return state;
   }
 };
 
+// export const changeFilter = (state = "SORT_BY_ID", action) => {
+//   switch (action.type) {
+//     case CHANGE_PRODUCTS_FILTER:
+//       return action.filter;
+//     default:
+//       return state;
+//   }
+// };
+
 export default combineReducers({
   products,
-  changeFilter
+  ads
 });

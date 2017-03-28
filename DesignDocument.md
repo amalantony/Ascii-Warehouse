@@ -22,18 +22,18 @@ Component List:
 State:
 {
     products: {
-        list: [], //  list of all the products,
-        prefetch: [], // set of all prefetched results
-        runningCount:  //  count in multiples of 20 to display the Ad (this might not be required if you use a selector instead)
+        items: [], //  list of all the products,
+        prefetchedItems: [], // set of all prefetched results
         isFetching: true or false // used by UI to toggle loading or not,
         isCatalogEnd: true or false // used by UI to toggle showing of of catalog message
-        lastUpdated: // timestamp
-        ads: {
-            previousAd: // id of the last shown Ad,
-            ads: [] // list of all ads
+        queryParams: {
+            sort: id | size | key  // sort items by
+            skip:  // skip & limt for subsequent requests
+            limit: 
         }
+        
     },
-    activeFilter: SIZE | PRICE | ID
+    adRefs: [],  // value of 'r' for ads
 }
 
 Actions:

@@ -20,6 +20,7 @@ const store = createStore(reducer, applyMiddleware(sagaMiddleWare));
 
 sagaMiddleWare.run(productSaga);
 
-ReactDOM.render(<AsciiWareHouseApp />, document.getElementById("root"));
-
-store.dispatch(fetchProductsRequest({ sort: "id", skip: 0, limit: 12 }, true));
+ReactDOM.render(
+  <AsciiWareHouseApp store={store} />,
+  document.getElementById("root")
+);

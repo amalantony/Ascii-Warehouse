@@ -18,7 +18,7 @@ expect(loadProducts()).toEqual({
 
 expect(fetchProductsRequest({ sort: "id", skip: 10, limit: 20 })).toEqual({
   type: "FETCH_PRODUCTS_REQUEST",
-  filter: {
+  options: {
     sort: "id",
     skip: 10,
     limit: 20
@@ -26,9 +26,20 @@ expect(fetchProductsRequest({ sort: "id", skip: 10, limit: 20 })).toEqual({
   initialLoad: false
 });
 
-expect(fetchProductsSuccess([{ foo: "baz" }], false)).toEqual({
+expect(
+  fetchProductsSuccess(
+    [{ foo: "baz" }],
+    { sort: "size", skip: 10, limit: 20 },
+    false
+  )
+).toEqual({
   type: "FETCH_PRODUCTS_SUCCESS",
   items: [{ foo: "baz" }],
+  options: {
+    sort: "size",
+    skip: 10,
+    limit: 20
+  },
   initialLoad: false
 });
 

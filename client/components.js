@@ -1,4 +1,5 @@
 import React from "react";
+import { fetchProductsRequest } from "./actions";
 
 export const TitleBar = () => {
   return (
@@ -76,12 +77,20 @@ class ProductGrid extends React.Component {
   handleScroll() {
     console.log("Scrolled!");
   }
-  fetchProducts() {
-    /* keep track of skip and limit */
-    console.log("fetching results");
+  fetchProducts(isInitial = false) {
+    /* read file, skip & limit from store & dispatch fetchProducts */
+    const store = this.props.store;
+    let queryParams = store.getState().products.queryParams;
+    if (!isInitial) {
+      // skip appropriately for new results
+      queryParams = Object.extend({}, queryParams, {
+        skip: queryParams.skip + queryParams.limit
+      });
+    }
+    this.props.store.dispatch(fetchProductsRequest(queryParams, isInitial));
   }
   componentDidMount() {
-    this.fetchProducts(); // do an initial fetch on component mount
+    this.fetchProducts(true); // do an initial fetch on component mount
     window.addEventListener("scroll", this.handleScroll);
   }
   componentWillUnmount() {
@@ -119,6 +128,6 @@ export const SortFilter = () => {
   );
 };
 
-export const AsciiWareHouseApp = () => {
-  return <ProductGrid />;
+export const AsciiWareHouseApp = ({ store }) => {
+  return <ProductGrid store={store} />;
 };

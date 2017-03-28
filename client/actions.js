@@ -6,10 +6,10 @@ export const loadProducts = () => {
 };
 
 export const FETCH_PRODUCTS_REQUEST = "FETCH_PRODUCTS_REQUEST";
-export const fetchProductsRequest = (filter, initialLoad = false) => {
+export const fetchProductsRequest = (options, initialLoad = false) => {
   return {
     type: FETCH_PRODUCTS_REQUEST,
-    filter,
+    options,
     initialLoad
   };
 };
@@ -23,10 +23,15 @@ export const fetchProductsFailure = error => {
 };
 
 export const FETCH_PRODUCTS_SUCCESS = "FETCH_PRODUCTS_SUCCESS";
-export const fetchProductsSuccess = (items, initialLoad) => {
+export const fetchProductsSuccess = (items, options, initialLoad) => {
   return {
     type: FETCH_PRODUCTS_SUCCESS,
     items,
+    options: {
+      sort: options.sort,
+      skip: options.skip,
+      limit: options.limit
+    },
     initialLoad
   };
 };

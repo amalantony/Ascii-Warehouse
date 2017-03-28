@@ -12,7 +12,7 @@ import {
   FETCH_AD_SUCCESS
 } from "./actions.js";
 
-import { products, ads, changeFilter } from "./reducers.js";
+import { products, ads } from "./reducers.js";
 
 /* 
 * TODO: Account for how the value of running count will change
@@ -82,37 +82,24 @@ expect(
     },
     {
       type: FETCH_PRODUCTS_SUCCESS,
+      options: {
+        sort: "id",
+        skip: 10,
+        limit: 20
+      },
       items: [{ joo: "jaz" }]
     }
   )
 ).toEqual({
   isFetching: false,
   isCatalogEnd: false,
+  queryParams: {
+    sort: "id",
+    skip: 10,
+    limit: 20
+  },
   items: [{ foo: "baz" }],
   prefetchedItems: [{ joo: "jaz" }]
-});
-
-expect(
-  products(
-    {
-      isFetching: true,
-      items: [],
-      isCatalogEnd: true,
-      prefetchedItems: [],
-      runningCount: 0
-    },
-    {
-      type: FETCH_PRODUCTS_SUCCESS,
-      initialLoad: true,
-      items: [{ foo: "baz" }, { joo: "jaz" }]
-    }
-  )
-).toEqual({
-  isFetching: false,
-  isCatalogEnd: false,
-  items: [{ foo: "baz" }, { joo: "jaz" }],
-  runningCount: 2,
-  prefetchedItems: []
 });
 
 expect(
@@ -125,14 +112,24 @@ expect(
     },
     {
       type: FETCH_PRODUCTS_SUCCESS,
-      items: [{ joo: "jaz" }]
+      items: [{ joo: "jaz" }],
+      options: {
+        sort: "size",
+        skip: 10,
+        limit: 20
+      }
     }
   )
 ).toEqual({
   isFetching: false,
   isCatalogEnd: false,
   items: [{ foo: "baz" }],
-  prefetchedItems: [{ joo: "jaz" }]
+  prefetchedItems: [{ joo: "jaz" }],
+  queryParams: {
+    sort: "size",
+    skip: 10,
+    limit: 20
+  }
 });
 
 /*
@@ -155,11 +152,11 @@ expect(
   prefetchedItems: []
 });
 
-expect(
-  changeFilter("SORT_BY_ID", {
-    type: CHANGE_PRODUCTS_FILTER,
-    filter: "SORT_BY_SIZE"
-  })
-).toEqual("SORT_BY_SIZE");
+// expect(
+//   changeFilter("SORT_BY_ID", {
+//     type: CHANGE_PRODUCTS_FILTER,
+//     filter: "SORT_BY_SIZE"
+//   })
+// ).toEqual("SORT_BY_SIZE");
 
 console.log("Reducers test passed!");

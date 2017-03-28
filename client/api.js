@@ -2,6 +2,7 @@ import fetch from "isomorphic-fetch";
 
 export const fetchProducts = (sort = "id", skip = 0, limit = 11) => {
   const queryParams = "?sort=" + sort + "&skip=" + skip + "&limit=" + limit;
+  console.log("In API.js, query exectued with", queryParams);
   return fetch("/api/products" + queryParams)
     .then(function(response) {
       return response.text();
