@@ -1,5 +1,5 @@
 import React from "react";
-import { fetchProductsRequest } from "./actions";
+import { fetchProductsRequest, loadProducts } from "./actions";
 import { getRenderableItems } from "./selectors.js";
 
 export const TitleBar = () => {
@@ -87,9 +87,28 @@ export const EndOfCatalog = () => {
 class ProductGrid extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      intervalId: null
+    };
   }
-  handleScroll() {
-    console.log("Scrolled!");
+  handleDataLoad() {
+    const windowHeight = "innerHeight" in window
+      ? window.innerHeight
+      : document.documentElement.offsetHeight;
+    const body = document.body;
+    const html = document.documentElement;
+    const docHeight = Math.max(
+      body.scrollHeight,
+      body.offsetHeight,
+      html.clientHeight,
+      html.scrollHeight,
+      html.offsetHeight
+    );
+    const windowBottom = windowHeight + window.pageYOffset;
+    if (windowBottom >= docHeight) {
+      console.log("Bottom reached!");
+      this.props.store.dispatch(loadProducts());
+    }
   }
   fetchProducts(isInitial = false) {
     /* read file, skip & limit from store & dispatch fetchProducts */
@@ -108,11 +127,11 @@ class ProductGrid extends React.Component {
       this.forceUpdate();
     });
     this.fetchProducts(true); // do an initial fetch on component mount
-    window.addEventListener("scroll", this.handleScroll);
+    this.state.intervalId = setInterval(this.handleDataLoad.bind(this), 1000);
   }
   componentWillUnmount() {
     this.unsubscribe();
-    window.removeEventListener("scroll", this.handleScroll);
+    clearInterval(this.state.intervalId);
   }
   render() {
     const state = this.props.store.getState();

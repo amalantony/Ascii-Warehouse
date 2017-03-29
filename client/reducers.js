@@ -21,7 +21,7 @@ export const products = (
     queryParams: {
       sort: "id",
       skip: 0,
-      limit: 15
+      limit: 23
     }
   },
   action
