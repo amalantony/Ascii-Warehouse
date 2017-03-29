@@ -22,8 +22,7 @@ expect(
     {
       isFetching: false,
       items: [{ foo: "baz" }],
-      prefetchedItems: [{ joo: "jaz" }],
-      runningCount: 0
+      prefetchedItems: [{ joo: "jaz" }]
     },
     {
       type: LOAD_PRODUCTS
@@ -32,8 +31,7 @@ expect(
 ).toEqual({
   isFetching: false,
   items: [{ foo: "baz" }, { joo: "jaz" }],
-  prefetchedItems: [],
-  runningCount: 0
+  prefetchedItems: []
 });
 
 expect(

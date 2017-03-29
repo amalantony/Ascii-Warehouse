@@ -1,5 +1,6 @@
 import React from "react";
 import { fetchProductsRequest } from "./actions";
+import { getRenderableItems } from "./selectors.js";
 
 export const TitleBar = () => {
   return (
@@ -16,14 +17,25 @@ export const TitleBar = () => {
 /* 
 *   Accepts the product image, Price & Size as props and renders the product 
 */
-export const Product = () => {
-  return <div className="one-third column listing-item" />;
+export const Product = ({ properties }) => {
+  const { face, price, date } = properties;
+  return (
+    <div className="one-third column listing-item">
+      <div> {face} </div>
+      <div> Price: {price} </div>
+      <div> Added on: {date} </div>
+    </div>
+  );
 };
 
 export const Advertisement = () => {
+  const getRandomInt = (min, max) =>
+    Math.floor(Math.random() * (max - min + 1)) + min;
+  const r = getRandomInt(1000000000000000, 9999999999999999);
+  const imgURl = `/ad/?r=${r}`;
   return (
     <div className="one-third column listing-item">
-      Product
+      <img className="ad" src={imgURl} />
     </div>
   );
 };
@@ -31,13 +43,18 @@ export const Advertisement = () => {
 /*
 *   Take 3 DisplayItems (Products/Advertisements) and render them
 */
-export const ProductRow = () => {
+export const ProductRow = ({ items }) => {
+  const rowItems = items.map((i, k) => {
+    if (i.type === "AD") {
+      return <Advertisement key={k} />;
+    } else {
+      return <Product key={k} properties={i} />;
+    }
+  });
   return (
     <div className="container">
       <div className="row">
-        <Product />
-        <Product />
-        <Product />
+        {rowItems}
       </div>
     </div>
   );
@@ -70,9 +87,6 @@ export const EndOfCatalog = () => {
 class ProductGrid extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      pollingIntervalId: null
-    };
   }
   handleScroll() {
     console.log("Scrolled!");
@@ -90,20 +104,27 @@ class ProductGrid extends React.Component {
     this.props.store.dispatch(fetchProductsRequest(queryParams, isInitial));
   }
   componentDidMount() {
+    this.unsubscribe = this.props.store.subscribe(() => {
+      this.forceUpdate();
+    });
     this.fetchProducts(true); // do an initial fetch on component mount
     window.addEventListener("scroll", this.handleScroll);
   }
   componentWillUnmount() {
+    this.unsubscribe();
     window.removeEventListener("scroll", this.handleScroll);
   }
   render() {
+    const state = this.props.store.getState();
+    const renderableItems = getRenderableItems(state);
+    const productRows = renderableItems.map((r, i) => (
+      <ProductRow key={i} items={r} />
+    ));
     return (
       <div>
         <TitleBar />
         <SortFilter />
-        <ProductRow />
-        <ProductRow />
-        <ProductRow />
+        {productRows}
         <Spinner />
         <EndOfCatalog />
       </div>

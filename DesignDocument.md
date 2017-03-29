@@ -6,6 +6,8 @@ Design Goals:
 - Explain why the choice was made for Redux
 
 
+- One tradeoff : while generating ads, I'm simply generating a large number & hoping there is no collision
+
 
 Component List: 
 ------------------------

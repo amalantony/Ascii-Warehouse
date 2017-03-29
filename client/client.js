@@ -5,6 +5,8 @@
 */
 import "./actions-test.js";
 import "./reducers-test.js";
+import "./selectors-test.js";
+
 import { AsciiWareHouseApp } from "./components.js";
 import reducer from "./reducers.js";
 import { productSaga } from "./sagas.js";

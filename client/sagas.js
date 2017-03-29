@@ -25,6 +25,7 @@ const createProductFetch = function*(action) {
       action.options.limit
     );
     if (items.length > 0) {
+      // server returned data, dispatch a FETCH_PRODUCTS_SUCCESS action.
       yield put(
         fetchProductsSuccess(
           items,
@@ -41,6 +42,7 @@ const createProductFetch = function*(action) {
         yield put(loadProducts());
       }
     } else {
+      // server returned no data, dipatch a CATALOG_END action.
       yield put(catalogEnd());
     }
   } catch (error) {
@@ -52,6 +54,7 @@ const getQueryParams = state => state.products.queryParams;
 
 const createProductRequest = function*() {
   let queryParams = yield select(getQueryParams);
+  // using Object.assign to avoid mutations on queryParams
   queryParams = Object.assign({}, queryParams, {
     skip: queryParams.skip + queryParams.limit
   });
