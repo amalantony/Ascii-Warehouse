@@ -8,8 +8,11 @@ export const fetchProducts = (sort = "id", skip = 0, limit = 11) => {
       return response.text();
     })
     .then(function(text) {
+      if (text.length === 0) return [];
       const lines = text.trim().split("\n");
-      const products = lines.map(lineStr => JSON.parse(lineStr));
+      const products = lines.map(lineStr => {
+        return JSON.parse(lineStr);
+      });
       return products;
     });
 };

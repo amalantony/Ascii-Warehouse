@@ -1,13 +1,14 @@
 import React from "react";
+import moment from "moment";
 import { fetchProductsRequest, loadProducts } from "./actions";
 import { getRenderableItems } from "./selectors.js";
 
 export const TitleBar = () => {
   return (
-    <div className="section hero">
+    <div className="section hero title-heading">
       <div className="container">
         <div className="row">
-          <h4 className="hero-heading"> ASCII WAREHOUSE </h4>
+          <h3 className="hero-heading"> ASCII WAREHOUSE </h3>
         </div>
       </div>
     </div>
@@ -18,12 +19,17 @@ export const TitleBar = () => {
 *   Accepts the product image, Price & Size as props and renders the product 
 */
 export const Product = ({ properties }) => {
-  const { face, price, date } = properties;
+  const { face, price, date, size } = properties;
+  const faceStyle = {
+    fontSize: size
+  };
+  const relativeDate = moment(new Date(date)).fromNow();
+  const formattedPrice = "$" + price / 100;
   return (
-    <div className="one-third column listing-item">
-      <div> {face} </div>
-      <div> Price: {price} </div>
-      <div> Added on: {date} </div>
+    <div className="one-third column listing-item product">
+      <div style={faceStyle}> {face} </div>
+      <div> Price: {formattedPrice} </div>
+      <div> Added: {relativeDate}</div>
     </div>
   );
 };
@@ -92,6 +98,7 @@ class ProductGrid extends React.Component {
     };
   }
   handleDataLoad() {
+    const state = this.props.store.getState();
     const windowHeight = "innerHeight" in window
       ? window.innerHeight
       : document.documentElement.offsetHeight;
@@ -106,14 +113,23 @@ class ProductGrid extends React.Component {
     );
     const windowBottom = windowHeight + window.pageYOffset;
     if (windowBottom >= docHeight) {
-      console.log("Bottom reached!");
-      this.props.store.dispatch(loadProducts());
+      const isCatalogEnd = state.products.isCatalogEnd;
+      if (isCatalogEnd) {
+        // if the catalog has ended, then there is no new data left to be loaded.
+        console.log("Catalog End, clearing Interval");
+        clearInterval(this.state.intervalId);
+      } else {
+        console.log("Bottom reached!");
+        this.props.store.dispatch(loadProducts());
+      }
     }
   }
   fetchProducts(isInitial = false) {
     /* read file, skip & limit from store & dispatch fetchProducts */
     const store = this.props.store;
-    let queryParams = store.getState().products.queryParams;
+    const state = store.getState();
+    let queryParams = state.products.queryParams;
+
     if (!isInitial) {
       // skip appropriately for new results
       queryParams = Object.extend({}, queryParams, {
