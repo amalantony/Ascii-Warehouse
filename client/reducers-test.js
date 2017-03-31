@@ -47,6 +47,7 @@ expect(
   )
 ).toEqual({
   isFetching: true,
+  isCatalogEnd: false,
   items: [{ foo: "baz" }],
   prefetchedItems: []
 });

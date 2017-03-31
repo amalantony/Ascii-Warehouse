@@ -122,8 +122,8 @@ class ProductGrid extends React.Component {
       intervalId: null,
       /* PreviousFilter has to be a local component state so that the interval check on data load when scrolled to bottom can be restarted. 
         The interval check is cleared when a CATALOG_END action is dispatched. 
-        However when, a CHANGE_PRODUCTS_FILTER is triggered afterwards, we need the polling to start again. */
-      previousFilter: "id"
+        However when, a CHANGE_PRODUCTS_FILTER is triggered afterwards, the polling must start again. */
+      previousFilter: null
     };
   }
   handleDataLoad() {
@@ -142,15 +142,8 @@ class ProductGrid extends React.Component {
       html.offsetHeight
     );
     const windowBottom = windowHeight + window.pageYOffset;
-    var hasVerticalScrollbar = body.scrollHeight > html.clientHeight;
     if (windowBottom >= docHeight) {
-      const isCatalogEnd = state.products.isCatalogEnd;
-      if (isCatalogEnd) {
-        // if the catalog has ended, then there is no new data left to be loaded.
-        clearInterval(this.state.intervalId);
-      } else {
-        store.dispatch(loadProducts());
-      }
+      store.dispatch(loadProducts());
     }
   }
   fetchProducts(isInitial = false) {
@@ -167,22 +160,31 @@ class ProductGrid extends React.Component {
     }
     store.dispatch(fetchProductsRequest(queryParams, isInitial));
   }
-  doInitialLoad() {
-    this.fetchProducts(true); // do an initial fetch on component mount
-    this.state.intervalId = setInterval(this.handleDataLoad.bind(this), 1000);
+  checkEndPolling() {
+    const { store } = this.context;
+    const state = store.getState();
+    const isCatalogEnd = state.products.isCatalogEnd;
+    if (isCatalogEnd) {
+      clearInterval(this.state.intervalId);
+    }
+  }
+  checkStartPolling() {
+    const { store } = this.context;
+    const state = store.getState();
+    const currentFilter = state.products.queryParams.sort;
+    if (currentFilter !== this.state.previousFilter) {
+      this.state.previousFilter = currentFilter;
+      this.state.intervalId = setInterval(this.handleDataLoad.bind(this), 1000);
+    }
   }
   componentDidMount() {
     const { store } = this.context;
     this.unsubscribe = store.subscribe(() => {
-      const state = store.getState();
-      const newFilter = state.products.queryParams.filter;
-      if (newFilter !== this.state.previousFilter) {
-        this.state.previousFilter = newFilter;
-        this.doInitialLoad();
-      }
+      this.checkStartPolling();
+      this.checkEndPolling();
       this.forceUpdate();
     });
-    this.doInitialLoad();
+    this.fetchProducts(true); // do an initial fetch on component mount
   }
   componentWillUnmount() {
     this.unsubscribe();
@@ -218,7 +220,8 @@ export const FilterOptions = (
     <div className="container">
       <div className="row">
         <div className="four columns">
-          <label htmlFor="drop-down-filter"> Sort By: </label> <select
+          <label htmlFor="drop-down-filter"> Sort By: </label>
+          <select
             className="u-full-width"
             id="drop-down-filter"
             value={currentFilter}
@@ -230,9 +233,9 @@ export const FilterOptions = (
             {" "}
             <option value="size"> Size </option>
             {" "}
-          </select>{" "}
-        </div>{" "}
-      </div>{" "}
+          </select>
+        </div>
+      </div>
     </div>
   );
 };

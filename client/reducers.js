@@ -41,7 +41,8 @@ export const products = (
 
     case FETCH_PRODUCTS_REQUEST:
       return Object.assign({}, state, {
-        isFetching: true
+        isFetching: true,
+        isCatalogEnd: false
       });
 
     case FETCH_PRODUCTS_FAILURE:
