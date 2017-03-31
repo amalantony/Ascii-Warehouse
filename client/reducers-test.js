@@ -20,7 +20,7 @@ import { products, ads } from "./reducers.js";
 expect(
   products(
     {
-      isFetching: false,
+      isFetching: true,
       items: [{ foo: "baz" }],
       prefetchedItems: [{ joo: "jaz" }]
     },
@@ -29,7 +29,7 @@ expect(
     }
   )
 ).toEqual({
-  isFetching: false,
+  isFetching: true,
   items: [{ foo: "baz" }, { joo: "jaz" }],
   prefetchedItems: []
 });
@@ -37,7 +37,7 @@ expect(
 expect(
   products(
     {
-      isFetching: false,
+      isFetching: true,
       items: [{ foo: "baz" }],
       prefetchedItems: []
     },
@@ -54,7 +54,7 @@ expect(
 expect(
   products(
     {
-      isFetching: false,
+      isFetching: true,
       isCatalogEnd: false,
       items: [{ foo: "baz" }],
       prefetchedItems: []
@@ -89,7 +89,7 @@ expect(
     }
   )
 ).toEqual({
-  isFetching: false,
+  isFetching: true,
   isCatalogEnd: false,
   queryParams: {
     sort: "id",
@@ -119,7 +119,7 @@ expect(
     }
   )
 ).toEqual({
-  isFetching: false,
+  isFetching: true,
   isCatalogEnd: false,
   items: [{ foo: "baz" }],
   prefetchedItems: [{ joo: "jaz" }],
@@ -149,6 +149,22 @@ expect(
   items: [{ foo: "baz" }],
   prefetchedItems: []
 });
+
+// const oldParams = {
+//   isFetching: true,
+//   isCatalogEnd: false,
+//   items: [{ foo: "baz" }],
+//   prefetchedItems: [{ joo: "jaz" }],
+//   queryParams: {
+//     sort: "size",
+//     skip: 10,
+//     limit: 20
+//   }
+// };
+
+// const newParams = {
+
+// };
 
 // expect(
 //   changeFilter("SORT_BY_ID", {

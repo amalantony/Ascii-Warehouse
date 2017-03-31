@@ -66,3 +66,9 @@ Points to consider ->
     - Who decides the advertisement placement & which state variable will keep track of it? (probably as part of the props that the ProductGrid will pass onto it's child Component, the Product Row)
 
     Advanced Fetch -> When FETCH_PAUSED && Prefetched results are empty
+
+
+
+- show loader on loading & fetch_products_request
+- hide loader on fetch_products_success
+- hide loader on catalog_end & show catalog_end

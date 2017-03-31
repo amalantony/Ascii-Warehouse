@@ -1,7 +1,12 @@
 import React from "react";
 import moment from "moment";
-import { fetchProductsRequest, loadProducts } from "./actions";
+import {
+  fetchProductsRequest,
+  loadProducts,
+  CHANGE_PRODUCTS_FILTER
+} from "./actions";
 import { getRenderableItems } from "./selectors.js";
+import { connect } from "react-redux";
 
 export const TitleBar = () => {
   return (
@@ -16,8 +21,8 @@ export const TitleBar = () => {
 };
 
 /* 
-*   Accepts the product image, Price & Size as props and renders the product 
-*/
+ *   Accepts the product image, Price & Size as props and renders the product 
+ */
 export const Product = ({ properties }) => {
   const { face, price, date, size } = properties;
   const faceStyle = {
@@ -29,7 +34,7 @@ export const Product = ({ properties }) => {
     <div className="one-third column listing-item product">
       <div style={faceStyle}> {face} </div>
       <div> Price: {formattedPrice} </div>
-      <div> Added: {relativeDate}</div>
+      <div> Added: {relativeDate} </div>
     </div>
   );
 };
@@ -37,18 +42,18 @@ export const Product = ({ properties }) => {
 export const Advertisement = () => {
   const getRandomInt = (min, max) =>
     Math.floor(Math.random() * (max - min + 1)) + min;
-  const r = getRandomInt(1000000000000000, 9999999999999999);
+  const r = getRandomInt(1000000000000000, 9999999999999999); // generate an r large enough to avoid ad collisions
   const imgURl = `/ad/?r=${r}`;
   return (
     <div className="one-third column listing-item">
-      <img className="ad" src={imgURl} />
+      <img className="ad" src={imgURl} />{" "}
     </div>
   );
 };
 
 /*
-*   Take 3 DisplayItems (Products/Advertisements) and render them
-*/
+ *   Take 3 DisplayItems (Products/Advertisements) and render them
+ */
 export const ProductRow = ({ items }) => {
   const rowItems = items.map((i, k) => {
     if (i.type === "AD") {
@@ -59,46 +64,71 @@ export const ProductRow = ({ items }) => {
   });
   return (
     <div className="container">
-      <div className="row">
-        {rowItems}
-      </div>
+      <div className="row"> {rowItems} </div>{" "}
     </div>
   );
 };
 
-export const Spinner = () => {
+export const Spinner = ({ display }) => {
+  const styling = {
+    display
+  };
   return (
-    <div className="container">
+    <div className="container" style={styling}>
       <div className="row">
         <div className="twelve columns spinner-container">
           <img className="spinner" src="images/spinner.svg" />
-        </div>
-      </div>
+        </div>{" "}
+      </div>{" "}
     </div>
   );
 };
 
-export const EndOfCatalog = () => {
+let mapStateToProps = state => {
+  return {
+    display: state.products.isFetching ? "initial" : "none"
+  };
+};
+
+export const ToggleSpinner = connect(mapStateToProps)(Spinner);
+
+export const CatalogEndMessage = ({ display }) => {
+  const styling = {
+    display
+  };
   return (
-    <div className="container">
+    <div className="container" style={styling}>
       <div className="row">
         <div className="twelve columns end-of-catalog-status">
-          ~ End of Catalog ~
-        </div>
-      </div>
+          ~End of Catalog~
+        </div>{" "}
+      </div>{" "}
     </div>
   );
 };
+
+mapStateToProps = state => {
+  return {
+    display: state.products.isCatalogEnd ? "initial" : "none"
+  };
+};
+
+export const EndOfCatalog = connect(mapStateToProps)(CatalogEndMessage);
 
 class ProductGrid extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      intervalId: null
+      intervalId: null,
+      /* PreviousFilter has to be a local component state so that the interval check on data load when scrolled to bottom can be restarted. 
+        The interval check is cleared when a CATALOG_END action is dispatched. 
+        However when, a CHANGE_PRODUCTS_FILTER is triggered afterwards, we need the polling to start again. */
+      previousFilter: "id"
     };
   }
   handleDataLoad() {
-    const state = this.props.store.getState();
+    const { store } = this.context;
+    const state = store.getState();
     const windowHeight = "innerHeight" in window
       ? window.innerHeight
       : document.documentElement.offsetHeight;
@@ -112,21 +142,20 @@ class ProductGrid extends React.Component {
       html.offsetHeight
     );
     const windowBottom = windowHeight + window.pageYOffset;
+    var hasVerticalScrollbar = body.scrollHeight > html.clientHeight;
     if (windowBottom >= docHeight) {
       const isCatalogEnd = state.products.isCatalogEnd;
       if (isCatalogEnd) {
         // if the catalog has ended, then there is no new data left to be loaded.
-        console.log("Catalog End, clearing Interval");
         clearInterval(this.state.intervalId);
       } else {
-        console.log("Bottom reached!");
-        this.props.store.dispatch(loadProducts());
+        store.dispatch(loadProducts());
       }
     }
   }
   fetchProducts(isInitial = false) {
-    /* read file, skip & limit from store & dispatch fetchProducts */
-    const store = this.props.store;
+    /* read sort, skip & limit from store & dispatch fetchProducts */
+    const { store } = this.context;
     const state = store.getState();
     let queryParams = state.products.queryParams;
 
@@ -136,21 +165,32 @@ class ProductGrid extends React.Component {
         skip: queryParams.skip + queryParams.limit
       });
     }
-    this.props.store.dispatch(fetchProductsRequest(queryParams, isInitial));
+    store.dispatch(fetchProductsRequest(queryParams, isInitial));
   }
-  componentDidMount() {
-    this.unsubscribe = this.props.store.subscribe(() => {
-      this.forceUpdate();
-    });
+  doInitialLoad() {
     this.fetchProducts(true); // do an initial fetch on component mount
     this.state.intervalId = setInterval(this.handleDataLoad.bind(this), 1000);
+  }
+  componentDidMount() {
+    const { store } = this.context;
+    this.unsubscribe = store.subscribe(() => {
+      const state = store.getState();
+      const newFilter = state.products.queryParams.filter;
+      if (newFilter !== this.state.previousFilter) {
+        this.state.previousFilter = newFilter;
+        this.doInitialLoad();
+      }
+      this.forceUpdate();
+    });
+    this.doInitialLoad();
   }
   componentWillUnmount() {
     this.unsubscribe();
     clearInterval(this.state.intervalId);
   }
   render() {
-    const state = this.props.store.getState();
+    const { store } = this.context;
+    const state = store.getState();
     const renderableItems = getRenderableItems(state);
     const productRows = renderableItems.map((r, i) => (
       <ProductRow key={i} items={r} />
@@ -158,32 +198,66 @@ class ProductGrid extends React.Component {
     return (
       <div>
         <TitleBar />
-        <SortFilter />
-        {productRows}
-        <Spinner />
+        <FilterDropdown /> {productRows} <ToggleSpinner />
         <EndOfCatalog />
       </div>
     );
   }
 }
+ProductGrid.contextTypes = {
+  store: React.PropTypes.object
+};
 
-export const SortFilter = () => {
+export const FilterOptions = (
+  {
+    currentFilter,
+    onChange
+  }
+) => {
   return (
     <div className="container">
       <div className="row">
         <div className="four columns">
-          <label htmlFor="drop-down-filter"> Sort By: </label>
-          <select className="u-full-width" id="drop-down-filter">
-            <option value="price">Price</option>
-            <option value="size">Size</option>
-            <option value="id">Id</option>
-          </select>
-        </div>
-      </div>
+          <label htmlFor="drop-down-filter"> Sort By: </label> <select
+            className="u-full-width"
+            id="drop-down-filter"
+            value={currentFilter}
+            onChange={onChange}
+          >
+            <option value="id"> Id </option>
+            {" "}
+            <option value="price"> Price </option>
+            {" "}
+            <option value="size"> Size </option>
+            {" "}
+          </select>{" "}
+        </div>{" "}
+      </div>{" "}
     </div>
   );
 };
 
-export const AsciiWareHouseApp = ({ store }) => {
-  return <ProductGrid store={store} />;
+mapStateToProps = state => {
+  return {
+    currentFilter: state.products.queryParams.sort
+  };
+};
+
+let mapDispatchToProps = dispatch => {
+  return {
+    onChange: event => {
+      const value = event.target.value;
+      dispatch({
+        type: CHANGE_PRODUCTS_FILTER,
+        value
+      });
+    }
+  };
+};
+export const FilterDropdown = connect(mapStateToProps, mapDispatchToProps)(
+  FilterOptions
+);
+
+export const AsciiWareHouseApp = () => {
+  return <ProductGrid />;
 };

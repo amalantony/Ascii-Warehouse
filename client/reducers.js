@@ -1,4 +1,5 @@
 import { combineReducers } from "redux";
+import deepFreeze from "deep-freeze";
 
 import {
   LOAD_PRODUCTS,
@@ -14,7 +15,7 @@ import {
 
 export const products = (
   state = {
-    isFetching: false,
+    isFetching: true, // hide spinner only when catalog has ended
     isCatalogEnd: false,
     items: [],
     prefetchedItems: [],
@@ -27,9 +28,13 @@ export const products = (
   action
 ) => {
   console.log("Got action type:", action.type);
+  /* TODO: remove the deepFreeze */
+  deepFreeze(state); // state & action must be immutable
+  deepFreeze(action);
   switch (action.type) {
     case LOAD_PRODUCTS:
       return Object.assign({}, state, {
+        isFetching: true,
         items: [...state.items, ...state.prefetchedItems],
         prefetchedItems: []
       });
@@ -49,7 +54,7 @@ export const products = (
 
     case FETCH_PRODUCTS_SUCCESS:
       return Object.assign({}, state, {
-        isFetching: false,
+        isFetching: true,
         isCatalogEnd: false,
         queryParams: {
           sort: action.options.sort,
@@ -61,8 +66,24 @@ export const products = (
 
     case CATALOG_END:
       return Object.assign({}, state, {
-        isCatalogEnd: true
+        isCatalogEnd: true,
+        isFetching: false
       });
+
+    case CHANGE_PRODUCTS_FILTER:
+      let newState = Object.assign({}, state, {
+        isFetching: true,
+        isCatalogEnd: false,
+        items: [],
+        prefetchedItems: []
+      });
+      newState.queryParams = {
+        // Object.assign does not copy nested objects
+        sort: action.value,
+        skip: 0,
+        limit: 23
+      };
+      return newState;
 
     default:
       return state;
