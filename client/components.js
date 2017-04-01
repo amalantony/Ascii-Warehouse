@@ -39,9 +39,9 @@ export const Product = ({ properties }) => {
   const formattedPrice = "$" + price / 100;
   return (
     <div className="one-third column listing-item product">
-      <div style={faceStyle}> {face} </div>
-      <div> Price: {formattedPrice} </div>
-      <div> Added: {formattedDate} </div>
+      <div className="face" style={faceStyle}> {face}</div>
+      <div className="price"> {formattedPrice} </div>
+      <div className="date"> Added: {formattedDate} </div>
     </div>
   );
 };

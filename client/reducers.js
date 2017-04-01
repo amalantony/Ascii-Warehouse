@@ -89,7 +89,10 @@ export const products = (
 const getRandomInt = (min, max) =>
   Math.floor(Math.random() * (max - min + 1)) + min;
 
-export const ads = (state = [2345343224567], action) => {
+export const ads = (
+  state = [getRandomInt(100000000000, 999999999999)],
+  action
+) => {
   const r = getRandomInt(100000000000, 999999999999); // generate an r large enough to avoid ad collisions
   switch (action.type) {
     case CREATE_AD:
