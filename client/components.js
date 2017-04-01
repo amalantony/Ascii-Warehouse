@@ -123,7 +123,9 @@ class ProductGrid extends React.Component {
       /* PreviousFilter has to be a local component state so that the interval check on data load when scrolled to bottom can be restarted. 
         The interval check is cleared when a CATALOG_END action is dispatched. 
         However when, a CHANGE_PRODUCTS_FILTER is triggered afterwards, the polling must start again. */
-      previousFilter: null
+      previousFilter: null,
+      skip: null,
+      limit: null
     };
   }
   handleDataLoad() {
@@ -142,8 +144,16 @@ class ProductGrid extends React.Component {
       html.offsetHeight
     );
     const windowBottom = windowHeight + window.pageYOffset;
+    const queryParams = state.products.queryParams;
     if (windowBottom >= docHeight) {
-      store.dispatch(loadProducts());
+      // while polling, don't make the same request twice
+      if (
+        queryParams.limit !== this.state.limit ||
+        queryParams.skip !== this.state.skip
+      ) {
+        setTimeout(() => store.dispatch(loadProducts()));
+      }
+      this.setQueryLimits();
     }
   }
   fetchProducts(isInitial = false) {
@@ -176,6 +186,12 @@ class ProductGrid extends React.Component {
       this.state.previousFilter = currentFilter;
       this.state.intervalId = setInterval(this.handleDataLoad.bind(this), 1000);
     }
+  }
+  setQueryLimits() {
+    const { store } = this.context;
+    const state = store.getState();
+    this.state.skip = state.products.queryParams.skip;
+    this.state.limit = state.products.queryParams.limit;
   }
   componentDidMount() {
     const { store } = this.context;
