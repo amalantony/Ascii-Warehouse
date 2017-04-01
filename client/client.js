@@ -18,8 +18,14 @@ import { createStore, applyMiddleware } from "redux";
 import createSagaMiddleware from "redux-saga";
 import { Provider } from "react-redux";
 
+/* TODO: REMOVE THIS */
+import { composeWithDevTools } from "redux-devtools-extension";
+
 const sagaMiddleWare = createSagaMiddleware();
-const store = createStore(reducer, applyMiddleware(sagaMiddleWare));
+const store = createStore(
+  reducer,
+  composeWithDevTools(applyMiddleware(sagaMiddleWare))
+);
 
 sagaMiddleWare.run(productSaga);
 

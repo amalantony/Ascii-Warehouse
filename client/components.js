@@ -129,6 +129,7 @@ class ProductGrid extends React.Component {
     };
   }
   handleDataLoad() {
+    console.log(".......");
     const { store } = this.context;
     const state = store.getState();
     const windowHeight = "innerHeight" in window
@@ -151,7 +152,11 @@ class ProductGrid extends React.Component {
         queryParams.limit !== this.state.limit ||
         queryParams.skip !== this.state.skip
       ) {
-        setTimeout(() => store.dispatch(loadProducts()));
+        if (state.products.items.length > 0) {
+          // during polling, don't load unless you have any items. For the initial set of items, the load happens
+          // in the saga. The load here is applicable only when the user scolls to the bottom.
+          setTimeout(() => store.dispatch(loadProducts()));
+        }
       }
       this.setQueryLimits();
     }

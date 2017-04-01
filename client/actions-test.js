@@ -7,9 +7,7 @@ import {
   fetchProductsFailure,
   changeProductsFilter,
   catalogEnd,
-  fetchAdRequest,
-  fetchAdFailure,
-  fetchAdSuccess
+  createAd
 } from "./actions.js";
 
 expect(loadProducts()).toEqual({
@@ -56,16 +54,8 @@ expect(catalogEnd()).toEqual({
   type: "CATALOG_END"
 });
 
-expect(fetchAdRequest()).toEqual({
-  type: "FETCH_AD_REQUEST"
-});
-
-expect(fetchAdFailure()).toEqual({
-  type: "FETCH_AD_FAILURE"
-});
-
-expect(fetchAdSuccess()).toEqual({
-  type: "FETCH_AD_SUCCESS"
+expect(createAd()).toEqual({
+  type: "CREATE_AD"
 });
 
 console.log("Actions tests passed!");

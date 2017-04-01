@@ -50,23 +50,9 @@ export const catalogEnd = () => {
   };
 };
 
-export const FETCH_AD_REQUEST = "FETCH_AD_REQUEST";
-export const fetchAdRequest = () => {
+export const CREATE_AD = "CREATE_AD";
+export const createAd = () => {
   return {
-    type: FETCH_AD_REQUEST
-  };
-};
-
-export const FETCH_AD_FAILURE = "FETCH_AD_FAILURE";
-export const fetchAdFailure = () => {
-  return {
-    type: FETCH_AD_FAILURE
-  };
-};
-
-export const FETCH_AD_SUCCESS = "FETCH_AD_SUCCESS";
-export const fetchAdSuccess = () => {
-  return {
-    type: FETCH_AD_SUCCESS
+    type: CREATE_AD
   };
 };

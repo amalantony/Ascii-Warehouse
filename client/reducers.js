@@ -1,5 +1,6 @@
 import { combineReducers } from "redux";
 import deepFreeze from "deep-freeze";
+import { ignoreActions, filterActions } from "redux-ignore";
 
 import {
   LOAD_PRODUCTS,
@@ -8,9 +9,7 @@ import {
   FETCH_PRODUCTS_FAILURE,
   CHANGE_PRODUCTS_FILTER,
   CATALOG_END,
-  FETCH_AD_REQUEST,
-  FETCH_AD_FAILURE,
-  FETCH_AD_SUCCESS
+  CREATE_AD
 } from "./actions.js";
 
 export const products = (
@@ -28,9 +27,6 @@ export const products = (
   action
 ) => {
   console.log("Got action type:", action.type);
-  /* TODO: remove the deepFreeze */
-  deepFreeze(state); // state & action must be immutable
-  deepFreeze(action);
   switch (action.type) {
     case LOAD_PRODUCTS:
       return Object.assign({}, state, {
@@ -91,20 +87,23 @@ export const products = (
   }
 };
 
-export const ads = (
-  state = {
-    previousAdId: 0,
-    items: []
-  },
-  action
-) => {
+const getRandomInt = (min, max) =>
+  Math.floor(Math.random() * (max - min + 1)) + min;
+
+export const ads = (state = [2345343224567], action) => {
+  const r = getRandomInt(100000000000, 999999999999); // generate an r large enough to avoid ad collisions
   switch (action.type) {
+    case CREATE_AD:
+      console.log("######## create AD ########", state);
+      return [...state, r];
+    case CHANGE_PRODUCTS_FILTER:
+      return [r];
     default:
       return state;
   }
 };
 
 export default combineReducers({
-  products,
-  ads
+  products: ignoreActions(products, [CREATE_AD]), // no need to call the product reducer on CREATE_AD actions
+  ads: filterActions(ads, [CREATE_AD, CHANGE_PRODUCTS_FILTER])
 });

@@ -11,10 +11,13 @@ import {
   catalogEnd,
   fetchProductsFailure,
   loadProducts,
+  createAd,
   /* Actions */
   FETCH_PRODUCTS_REQUEST,
+  FETCH_PRODUCTS_SUCCESS,
   LOAD_PRODUCTS,
-  CHANGE_PRODUCTS_FILTER
+  CHANGE_PRODUCTS_FILTER,
+  CREATE_AD
 } from "./actions.js";
 
 const createProductFetch = function*(action) {
@@ -70,6 +73,10 @@ const createProductRequest = function*(isFilterChange) {
   yield put(fetchProductsRequest(queryParams, isFilterChange));
 };
 
+const createAdvert = function*() {
+  yield put(createAd());
+};
+
 export function* productSaga() {
   // handle every FETCH_PRODUCTS_REQUEST by dispatching either a FETCH_PRODUCTS_SUCCESS or FETCH_PRODUCTS_FAILURE depending on the outcome
   yield takeEvery(FETCH_PRODUCTS_REQUEST, createProductFetch);
@@ -77,5 +84,8 @@ export function* productSaga() {
   // for every LOAD_PRODUCTS, dispatch a FETCH_PRODUCTS_REQUEST for pre-emptive fetching
   yield takeEvery(LOAD_PRODUCTS, createProductRequest);
 
+  // when a CHANGE_PRODUCTS_FILTER is dipsatched, treat it as an inital data load
   yield takeEvery(CHANGE_PRODUCTS_FILTER, createProductRequest, true);
+
+  yield takeEvery(LOAD_PRODUCTS, createAdvert);
 }
