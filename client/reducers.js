@@ -26,7 +26,6 @@ export const products = (
   },
   action
 ) => {
-  console.log("Got action type:", action.type);
   switch (action.type) {
     case LOAD_PRODUCTS:
       return Object.assign({}, state, {
@@ -94,7 +93,6 @@ export const ads = (state = [2345343224567], action) => {
   const r = getRandomInt(100000000000, 999999999999); // generate an r large enough to avoid ad collisions
   switch (action.type) {
     case CREATE_AD:
-      console.log("######## create AD ########", state);
       return [...state, r];
     case CHANGE_PRODUCTS_FILTER:
       return [r];

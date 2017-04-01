@@ -1,6 +1,6 @@
 import expect from "expect";
 import {
-  getRenderableItems,
+  getRenderableItemsWithPlaceholders,
   splitItemsInGroups,
   insertAds
 } from "./selectors.js";
@@ -24,7 +24,7 @@ expect(insertAds([1, 2, 3, 4, 5, 6, 7], 3)).toEqual([
 ]);
 
 expect(
-  getRenderableItems({
+  getRenderableItemsWithPlaceholders({
     products: {
       items: [1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2]
     }

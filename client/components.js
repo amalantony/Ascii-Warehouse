@@ -39,10 +39,7 @@ export const Product = ({ properties }) => {
   );
 };
 
-export const Advertisement = () => {
-  const getRandomInt = (min, max) =>
-    Math.floor(Math.random() * (max - min + 1)) + min;
-  const r = getRandomInt(1000000000000000, 9999999999999999); // generate an r large enough to avoid ad collisions
+export const Advertisement = ({ r }) => {
   const imgURl = `/ad/?r=${r}`;
   return (
     <div className="one-third column listing-item">
@@ -57,7 +54,7 @@ export const Advertisement = () => {
 export const ProductRow = ({ items }) => {
   const rowItems = items.map((i, k) => {
     if (i.type === "AD") {
-      return <Advertisement key={k} />;
+      return <Advertisement key={k} r={i.r} />;
     } else {
       return <Product key={k} properties={i} />;
     }
@@ -215,6 +212,7 @@ class ProductGrid extends React.Component {
     const { store } = this.context;
     const state = store.getState();
     const renderableItems = getRenderableItems(state);
+
     const productRows = renderableItems.map((r, i) => (
       <ProductRow key={i} items={r} />
     ));

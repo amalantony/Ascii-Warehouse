@@ -1,6 +1,7 @@
 import { createSelector } from "reselect";
 
 const getItems = state => state.products.items;
+const getAds = state => state.ads;
 
 const ROW_GAP = 3; // number of items in each row
 const AD_GAP = 20; // how many products to render before an AD is diplayed
@@ -39,5 +40,28 @@ export const insertAds = (items, adGap) => {
   );
 };
 
-export const getRenderableItems = createSelector(getItems, items =>
-  splitItemsInGroups(insertAds(items, AD_GAP), ROW_GAP));
+export const getRenderableItemsWithPlaceholders = createSelector(
+  /*
+  * Since Ad refs are randomly generated, having ad placeholders makes unit testing easy.
+  */
+  getItems,
+  items => splitItemsInGroups(insertAds(items, AD_GAP), ROW_GAP)
+);
+
+export const getRenderableItems = createSelector(
+  [getRenderableItemsWithPlaceholders, getAds],
+  (items, ads) => {
+    let adCounter = 0;
+    return items.map(row => {
+      return row.map(item => {
+        if (item.type === "AD") {
+          return {
+            type: "AD",
+            r: ads[adCounter++]
+          };
+        } else
+          return item;
+      });
+    });
+  }
+);
