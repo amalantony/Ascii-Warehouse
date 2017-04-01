@@ -28,13 +28,20 @@ export const Product = ({ properties }) => {
   const faceStyle = {
     fontSize: size
   };
-  const relativeDate = moment(new Date(date)).fromNow();
+  const dateDiff = new Date() - new Date(date);
+  const diffInDays = Math.ceil(dateDiff / (1000 * 3600 * 24));
+  let formattedDate;
+  if (diffInDays > 7) {
+    formattedDate = moment(new Date(date)).format("ll"); // show day, month and year
+  } else {
+    formattedDate = moment(new Date(date)).fromNow(); // show relative date
+  }
   const formattedPrice = "$" + price / 100;
   return (
     <div className="one-third column listing-item product">
       <div style={faceStyle}> {face} </div>
       <div> Price: {formattedPrice} </div>
-      <div> Added: {relativeDate} </div>
+      <div> Added: {formattedDate} </div>
     </div>
   );
 };
@@ -126,7 +133,6 @@ class ProductGrid extends React.Component {
     };
   }
   handleDataLoad() {
-    console.log(".......");
     const { store } = this.context;
     const state = store.getState();
     const windowHeight = "innerHeight" in window
