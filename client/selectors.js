@@ -16,7 +16,7 @@ export const splitItemsInGroups = (items, size) => {
       if (!(i % size)) {
         // if index is 0 or can be divided by the `size`...
         let tmpArr = items.slice(i, i + size);
-        acc.push(tmpArr); // ..push a chunk of the original array to the accumulator
+        acc.push(tmpArr);
       }
       return acc;
     },

@@ -10,8 +10,8 @@ export const Spinner = ({ display }) => {
       <div className="row">
         <div className="twelve columns spinner-container">
           <img className="spinner" src="images/spinner.svg" />
-        </div>{" "}
-      </div>{" "}
+        </div>
+      </div>
     </div>
   );
 };

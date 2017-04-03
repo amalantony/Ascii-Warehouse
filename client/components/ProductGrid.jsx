@@ -24,6 +24,10 @@ export class ProductGrid extends React.Component {
   }
 
   handleDataLoad() {
+    /* 
+    * handleDataLoad - this method checks if the user is at page bottom, if so it dispatches a LOAD_PRODUCTS action 
+    *   so that the prefetched items can be loaded onto the DOM
+    */
     const { store } = this.context;
     const state = store.getState();
     const windowHeight = "innerHeight" in window
@@ -57,7 +61,7 @@ export class ProductGrid extends React.Component {
   }
 
   fetchProducts(isInitial = false) {
-    /* read queryParams (sort, skip & limit) from the store & dispatch fetchProducts */
+    /* read queryParams (sort, skip & limit) from the store & dispatch a FETCH_PRODUCTS_REQUEST with those params */
     const { store } = this.context;
     const state = store.getState();
     let queryParams = state.products.queryParams;
@@ -71,7 +75,8 @@ export class ProductGrid extends React.Component {
     store.dispatch(fetchProductsRequest(queryParams, isInitial));
   }
 
-  checkEndPolling() {
+  shouldEndPolling() {
+    /* Determines if the catalog has ended, so that polling for scroll to bottom can be stopped */
     const { store } = this.context;
     const state = store.getState();
     const isCatalogEnd = state.products.isCatalogEnd;
@@ -80,7 +85,8 @@ export class ProductGrid extends React.Component {
     }
   }
 
-  checkStartPolling() {
+  shouldStartPolling() {
+    /* This method determines if polling must be started to check if the user has scrolled to page bottom (to load new messages) */
     const { store } = this.context;
     const state = store.getState();
     const currentFilter = state.products.queryParams.sort;
@@ -100,8 +106,8 @@ export class ProductGrid extends React.Component {
   componentDidMount() {
     const { store } = this.context;
     this.unsubscribe = store.subscribe(() => {
-      this.checkStartPolling();
-      this.checkEndPolling();
+      this.shouldStartPolling();
+      this.shouldEndPolling();
       this.forceUpdate();
     });
     this.fetchProducts(true); // do an initial fetch on component mount

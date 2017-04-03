@@ -20,11 +20,8 @@ export const Filter = (
             onChange={onChange}
           >
             <option value="id"> Id </option>
-            {" "}
             <option value="price"> Price </option>
-            {" "}
             <option value="size"> Size </option>
-            {" "}
           </select>
         </div>
       </div>

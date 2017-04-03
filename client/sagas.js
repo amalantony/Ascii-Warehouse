@@ -39,7 +39,7 @@ const createProductFetch = function*(action) {
         )
       );
       if (action.initialLoad) {
-        // Dispatch a LOAD_PRODUCTS action right away for initial data load (don't wait for scrollToBottom)
+        // Dispatch a LOAD_PRODUCTS action right away for initial data load (don't wait for the user to scroll to bottom)
         yield put(loadProducts());
       }
     } else {
@@ -47,6 +47,7 @@ const createProductFetch = function*(action) {
       yield put(catalogEnd());
     }
   } catch (error) {
+    // error fetching/parsing results from the server, generate an FETCH_PRODUCTS_FAILURE action
     yield put(fetchProductsFailure(error));
   }
 };

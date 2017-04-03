@@ -3,7 +3,7 @@ import { Product } from "./Product.jsx";
 import { Advertisement } from "./Advertisement.jsx";
 
 /*
- *   Take 3 DisplayItems (Products/Advertisements) and render them
+ *   Take 3 DisplayItems (Products/Advertisements) and renders them
  */
 export const ProductRow = ({ items }) => {
   const rowItems = items.map((i, k) => {

@@ -89,7 +89,7 @@ export const products = (
   }
 };
 
-// 12 digit range for random numbers for the value of 'r' in adverts (this will hopefully avoid collisions)
+// 12 digit range for random numbers for the value of 'r' in adverts (this will make collisions less likely)
 const RANDOM_MIN = 100000000000;
 const RANDOM_MAX = 999999999999;
 

@@ -12,6 +12,6 @@ export const fetchProducts = (sort = "id", skip = 0, limit = 11) => {
       const products = lines.map(lineStr => {
         return JSON.parse(lineStr);
       });
-      return products;
+      return products; // errors are resolved in sagas
     });
 };
