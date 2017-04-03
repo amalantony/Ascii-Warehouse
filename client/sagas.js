@@ -3,9 +3,6 @@ import { call, put, takeEvery, select } from "redux-saga/effects";
 import { fetchProducts } from "./api.js";
 import {
   /* Action Creators */
-  initialiseApp,
-  initialiseFailure,
-  initialiseSuccess,
   fetchProductsRequest,
   fetchProductsSuccess,
   catalogEnd,
@@ -87,5 +84,6 @@ export function* productSaga() {
   // when a CHANGE_PRODUCTS_FILTER is dipsatched, treat it as an inital data load
   yield takeEvery(CHANGE_PRODUCTS_FILTER, createProductRequest, true);
 
+  // creating a new Ad everytime there is a LOAD_PRODUCTS action
   yield takeEvery(LOAD_PRODUCTS, createAdvert);
 }

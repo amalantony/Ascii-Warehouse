@@ -1,5 +1,5 @@
 import React from "react";
-import CHANGE_PRODUCTS_FILTER from "../actions.js";
+import { CHANGE_PRODUCTS_FILTER } from "../actions.js";
 import { connect } from "react-redux";
 
 export const Filter = (

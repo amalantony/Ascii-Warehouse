@@ -50,7 +50,7 @@ export const getRenderableItemsWithPlaceholders = createSelector(
 
 export const getRenderableItems = createSelector(
   /*
-  * Takes the placeholder items & adds the 'r' params to the ads in them
+  * Takes the placeholder items & adds the randmized 'r' params to the ads in them
   */
   [getRenderableItemsWithPlaceholders, getAds],
   (items, ads) => {

@@ -14,14 +14,15 @@ export class ProductGrid extends React.Component {
     super(props);
     this.state = {
       intervalId: null,
-      /* PreviousFilter has to be a local component state so that the interval check on data load when scrolled to bottom can be restarted. 
+      previousFilter: null,
+      /* PreviousFilter has to be a local React component state so that the interval check on data load when scrolled to bottom can be restarted. 
         The interval check is cleared when a CATALOG_END action is dispatched. 
         However when, a CHANGE_PRODUCTS_FILTER is triggered afterwards, the polling must start again. */
-      previousFilter: null,
       skip: null,
       limit: null
     };
   }
+
   handleDataLoad() {
     const { store } = this.context;
     const state = store.getState();
@@ -46,7 +47,7 @@ export class ProductGrid extends React.Component {
         queryParams.skip !== this.state.skip
       ) {
         if (state.products.items.length > 0) {
-          // during polling, don't load unless you have any items. For the initial set of items, the load happens
+          // during polling, don't dispatch load unless there are any items. For the initial set of items, the load happens
           // in the saga. The load here is applicable only when the user scolls to the bottom.
           setTimeout(() => store.dispatch(loadProducts()));
         }
@@ -54,8 +55,9 @@ export class ProductGrid extends React.Component {
       this.setQueryLimits();
     }
   }
+
   fetchProducts(isInitial = false) {
-    /* read sort, skip & limit from store & dispatch fetchProducts */
+    /* read queryParams (sort, skip & limit) from the store & dispatch fetchProducts */
     const { store } = this.context;
     const state = store.getState();
     let queryParams = state.products.queryParams;
@@ -68,6 +70,7 @@ export class ProductGrid extends React.Component {
     }
     store.dispatch(fetchProductsRequest(queryParams, isInitial));
   }
+
   checkEndPolling() {
     const { store } = this.context;
     const state = store.getState();
@@ -76,6 +79,7 @@ export class ProductGrid extends React.Component {
       clearInterval(this.state.intervalId);
     }
   }
+
   checkStartPolling() {
     const { store } = this.context;
     const state = store.getState();
@@ -85,12 +89,14 @@ export class ProductGrid extends React.Component {
       this.state.intervalId = setInterval(this.handleDataLoad.bind(this), 1000);
     }
   }
+
   setQueryLimits() {
     const { store } = this.context;
     const state = store.getState();
     this.state.skip = state.products.queryParams.skip;
     this.state.limit = state.products.queryParams.limit;
   }
+
   componentDidMount() {
     const { store } = this.context;
     this.unsubscribe = store.subscribe(() => {
@@ -100,10 +106,12 @@ export class ProductGrid extends React.Component {
     });
     this.fetchProducts(true); // do an initial fetch on component mount
   }
+
   componentWillUnmount() {
     this.unsubscribe();
     clearInterval(this.state.intervalId);
   }
+
   render() {
     const { store } = this.context;
     const state = store.getState();
@@ -123,6 +131,7 @@ export class ProductGrid extends React.Component {
     );
   }
 }
+
 ProductGrid.contextTypes = {
   store: React.PropTypes.object
 };

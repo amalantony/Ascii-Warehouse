@@ -11,6 +11,9 @@ import {
   CREATE_AD
 } from "./actions.js";
 
+const defaultLimit = 23;
+const defaultSkip = 0;
+
 export const products = (
   state = {
     isFetching: true, // hide spinner only when catalog has ended
@@ -18,9 +21,10 @@ export const products = (
     items: [],
     prefetchedItems: [],
     queryParams: {
+      // Set of params based on which product fetch queries must be executed
       sort: "id",
-      skip: 0,
-      limit: 23
+      skip: defaultSkip,
+      limit: defaultLimit
     }
   },
   action
@@ -29,20 +33,19 @@ export const products = (
     case LOAD_PRODUCTS:
       return Object.assign({}, state, {
         isFetching: true,
-        items: [...state.items, ...state.prefetchedItems],
+        items: [...state.items, ...state.prefetchedItems], // merge prefetched products to products
         prefetchedItems: []
       });
 
     case FETCH_PRODUCTS_REQUEST:
+      // show the spinner on a fetch products request
       return Object.assign({}, state, {
         isFetching: true,
         isCatalogEnd: false
       });
 
     case FETCH_PRODUCTS_FAILURE:
-      /*
-     * TODO: show the approriate error (perhaps have a property on state)
-     */
+      // hide the spinner when a fetch products request failed
       return Object.assign({}, state, {
         isFetching: false
       });
@@ -52,6 +55,7 @@ export const products = (
         isFetching: true,
         isCatalogEnd: false,
         queryParams: {
+          // on every fetch sucess, reset the query params for the next fetch
           sort: action.options.sort,
           skip: action.options.skip,
           limit: action.options.limit
@@ -75,8 +79,8 @@ export const products = (
       newState.queryParams = {
         // Object.assign does not copy nested objects
         sort: action.value,
-        skip: 0,
-        limit: 23
+        skip: defaultSkip,
+        limit: defaultLimit
       };
       return newState;
 
@@ -85,6 +89,7 @@ export const products = (
   }
 };
 
+// 12 digit range for random numbers for the value of 'r' in adverts (this will hopefully avoid collisions)
 const RANDOM_MIN = 100000000000;
 const RANDOM_MAX = 999999999999;
 
@@ -92,7 +97,7 @@ const getRandomInt = (min, max) =>
   Math.floor(Math.random() * (max - min + 1)) + min;
 
 export const ads = (state = [getRandomInt(RANDOM_MIN, RANDOM_MAX)], action) => {
-  const r = getRandomInt(RANDOM_MIN, RANDOM_MAX); // generate an r large enough to avoid ad collisions
+  const r = getRandomInt(RANDOM_MIN, RANDOM_MAX);
   switch (action.type) {
     case CREATE_AD:
       return [...state, r];

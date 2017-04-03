@@ -77,5 +77,5 @@ mocha test
 Setup
 -------
 npm install
-webpack
+webpack build
 npm test
