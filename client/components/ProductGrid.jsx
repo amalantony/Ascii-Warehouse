@@ -3,7 +3,6 @@ import React from "react";
 import { fetchProductsRequest, loadProducts } from "../actions";
 import { getRenderableItems } from "../selectors.js";
 
-import { TitleBar } from "./TitleBar.jsx";
 import { FilterDropdown } from "./Filter.jsx";
 import { ProductRow } from "./ProductRow.jsx";
 import { ToggleSpinner } from "./Spinner.jsx";
@@ -128,7 +127,6 @@ export class ProductGrid extends React.Component {
     ));
     return (
       <div>
-        <TitleBar />
         <FilterDropdown />
         {productRows}
         <ToggleSpinner />

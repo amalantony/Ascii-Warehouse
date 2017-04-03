@@ -11,12 +11,12 @@ import {
   CREATE_AD
 } from "./actions.js";
 
-const defaultLimit = 23;
+const defaultLimit = 23; // default values for limit and skip
 const defaultSkip = 0;
 
 export const products = (
   state = {
-    isFetching: true, // hide spinner only when catalog has ended
+    isFetching: true, // spinner is in action, when the app loads
     isCatalogEnd: false,
     items: [],
     prefetchedItems: [],

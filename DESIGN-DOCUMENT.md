@@ -93,7 +93,7 @@ Redux Reducers:
 `ads`: Reducer for all state changes relating to ads.
 
 
-Tests
+Tests:
 --------
 The project uses `Mocha` as the test runner and the `expect` assetion library. Tests are present under the `test/` folder an can be run with the `npm test` command.
 
