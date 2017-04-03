@@ -1,5 +1,4 @@
 import { combineReducers } from "redux";
-import deepFreeze from "deep-freeze";
 import { ignoreActions, filterActions } from "redux-ignore";
 
 import {
@@ -86,14 +85,14 @@ export const products = (
   }
 };
 
+const RANDOM_MIN = 100000000000;
+const RANDOM_MAX = 999999999999;
+
 const getRandomInt = (min, max) =>
   Math.floor(Math.random() * (max - min + 1)) + min;
 
-export const ads = (
-  state = [getRandomInt(100000000000, 999999999999)],
-  action
-) => {
-  const r = getRandomInt(100000000000, 999999999999); // generate an r large enough to avoid ad collisions
+export const ads = (state = [getRandomInt(RANDOM_MIN, RANDOM_MAX)], action) => {
+  const r = getRandomInt(RANDOM_MIN, RANDOM_MAX); // generate an r large enough to avoid ad collisions
   switch (action.type) {
     case CREATE_AD:
       return [...state, r];

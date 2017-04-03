@@ -66,3 +66,16 @@ Reducers:
 ------------
     products
     ads
+
+
+Tests
+--------
+Uses mocha and the expect assetion library. Tests are present under the test/ folder
+mocha test
+
+
+Setup
+-------
+npm install
+webpack
+npm test

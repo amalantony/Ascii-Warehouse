@@ -3,11 +3,8 @@
 * TODO: Remove these tests and move them to a test runner!
 *
 */
-import "./actions-test.js";
-import "./reducers-test.js";
-import "./selectors-test.js";
 
-import { AsciiWareHouseApp } from "./components.js";
+import { AsciiWareHouseApp } from "./components/AsciiWareHouseApp.jsx";
 import reducer from "./reducers.js";
 import { productSaga } from "./sagas.js";
 import { fetchProductsRequest } from "./actions.js";
