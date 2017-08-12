@@ -1,15 +1,12 @@
 Discount Ascii Warehouse
 ====
 
-This is an ecommerce site, where you can buy all sorts of ascii faces like `(ノ・∀・)ノ` and `¯_(ツ)_/¯`, in a wide variety of font sizes. The homepage should display a list of products for people to browse.
-
-Please read the instructions and FAQ below before beginning.
+This is an ecommerce site, where you can buy all sorts of ascii faces like `(ノ・∀・)ノ` and `¯_(ツ)_/¯`, in a wide variety of font sizes. The homepage displays a list of products for people to browse.
 
 Features
 ----
-
 - products are displayed in a grid.
-- give the user an option to sort the products in ascending order. Can sort by "size", "price" or "id".
+- user has the option to sort the products in ascending order. Can sort by "size", "price" or "id".
 - each product has :
   - a "size" field, which is the font-size (in pixels). We should display the faces in their correct size, to give customers a realistic impression of what they're buying.
   - a "price" field, in cents. This should be formatted as dollars like `$3.51`.
@@ -21,50 +18,102 @@ Features
 
 ### Ads features
 
-- after every 20 products we need to insert an advertisement from one of our sponsors. Use the same markup as the advertisement in the header, but make sure the `?r` query param is randomly generated each time an ad is displayed.
+- after every 20 products we need to insert an advertisement from one of our sponsors
 - Ads should be randomly selected, but a user must never see the same ad twice in a row.
 
 
-Products API
-----
+Code Organisation
+----------------
+The client side Javascript code is located in the `client/` folder, the tests are in the `test/` folder. Webpack bundles all client code to a single js file `bundle.js` file in the `static/js` directory and this file is included in `index.html`.
 
-- The basic query looks like this: `/api/products`
-- The response format is newline-delimited JSON.
-- To get a larger results set use the `limit` parameter, eg: `/api/products?limit=100`
-- To paginate results use the `skip` parameter, eg: `/api/products?limit=15&skip=30` (returns 15 results starting from the 30th).
-- To sort results use the `sort` parameter, eg: `/api/products?sort=price`. Valid sort values are `price`, `size` and `id`.
 
-FAQ
-----
+List of React components: 
+----------------
+The app is composed of the following React components.
 
-### How do I start the app?
+`AsciiWareHouseApp` - The root app component, it consists of the following components: 
 
-Start with `npm start`. The server will look for any files you add to the `static/` directory.
+- `TitleBar`: Presentational component that displays the title of the app.
+- `ProductGrid`: Presentaional component that renders the grid of products
+- `FilterDropdown`: Container components that wraps the `Filter` component
+- `Filter`: Presentational component that displays the drop down filter to pick the sort option
+- `ProductRow`: Presentational component that Renders a row of Products + Advertisement (when applicable)
+- `Product`: Renders a product
+- `Advertisement`: Renders an advertisement.
+- `ToggleSpinner`: Container component that wraps the `Spinner` component
+- `Spinner`: Presentational component that shows a spinner while data is loading
+- `EndOfCatalog`: Container component that wraps the `CatalogEndMessage` component.
+- `CatalogEndMessage`: Presentational component that displays the end of catalog message.
 
-### Can I use {{ module_x }}?
 
-Yes, that's fine.
+State Object:
+-----------------
+The application state is modelled as below (Redux state):
+```
+{
+products: {
+items: [], //  list of all products currently rendered on the DOM,
+prefetchedItems: [], // set of all prefetched products that have not been loaded into the DOM yet
+isFetching: true or false // used by the UI to toggle showing the loading spinner,
+isCatalogEnd: true or false // used by UI to toggle showing the catalog message
+queryParams: {  // stores information about the next batch of product fetch
+sort: id | size | key  
+skip:  Number
+limit: Number
+}
 
-### What about sort order (ascending / descending)?
+},
+ads: [],  // stores the set generated values of 'r' for ads, so that ads don't re-render each time the DOM re-renders
+}
+```
 
-We don't need to worry about alternate sort order for this project, we'll just use ascending-order for everything.
+Redux Actions:
+----------
+The following Redux actions change the application state:
 
-### Can I make changes to the backend or API?
+(seperate events to decouple network requests from UI Events:)
 
-No, your final solution should not include any changes to the server code.
+`FETCH_PRODUCTS_REQUEST`: Dispatched when a fetch for products to the server has been requested.
 
-### What should I do when I'm finished?
+`FETCH_PRODUCTS_FAILURE`: Dispatched when the fetch initiated earlier was successful. 
 
-Please zip up your files and email them back, along with information about which features you have included in your solution.
+`FETCH_PRODUCTS_SUCCESS`: Dispatched when the fetch failed.
 
-### How is the exam graded?
+-------
 
-We are looking for idiomatic use of javascript, and the ability to solve the problems with code that is clean and easy to read. Even though it's very small in scope, please show us how you would use the language and conventions to structure things in a clear and maintainable way.
+`LOAD_PRODUCTS`: Dispatched in order to load the products (that were pre-fetched) and ads into the UI as the user scrolls to page bottom.
 
-Don't worry about visual aspects, ugly is fine :) Unless you would like to show us your UI skills, in which case, feel free :)
+`CHANGE_PRODUCT_FILTER`: Dispatched when the user changes the sort filter.
 
-### This looks like it will take a while and I'm pretty busy
+`CATALOG_END`: Dispatched when the request to server returned no results and a End Catalog message has to be shown.
 
-You're right! With something open-ended like this you could easily spend a week polishing and getting it just right. We don't expect you to do this, and we'll do our best to make sure you're not disadvantaged by this.
+`CREATE_AD`: Dispatched when a new ad needs to be generated. This action results in the creation of a new `r` param in the store, so that subsequent renders can display this ad.
 
-When we grade this exam we're not giving you a "score out of 100" for how many features you complete. We're trying to get some insight into your process, to see the way you work. So, by all means, spend more time if you want to. But you are also free to leave certain features out and give a written explanation of how you would approach it. The best approach is to spend your time on the features that you think is the best way to show us your strengths and experience.
+Action Flow:
+-------------
+When a set of products have to be queried for, a `FETCH_PRODUCTS_REQUEST` action is dispatched. If a fetch was successful, a `FETCH_PRODUCTS_SUCCESS` action is dispatched or in case of failure a `FETCH_PRODUCTS_FAILURE`. When the user scrolls to bottom, a `LOAD_PRODUCTS` action is dispatched which loads the prefetched items into the DOM.
+
+For an inital fetch `LOAD_PRODUCTS` action is dipatched immediately after the first `FETCH_PRODUCT_SUCCESS` since in this case, there is no need to wait till the user scrolls to the bottom.
+
+The `CATALOG_END` action is dispatched when the server does not return any more results and this triggers an End of catlog message on the UI.
+
+News ads are created in the ads reducer when a `CREATE_AD` action is dispatched. A `LOAD_PRODUCTS` action loads the products intermixed with these ads into the UI.
+
+Redux Reducers:
+------------
+`products`: Reducer for all state changes relating to products.
+
+`ads`: Reducer for all state changes relating to ads.
+
+
+Tests:
+--------
+The project uses `Mocha` as the test runner and the `expect` assetion library. Tests are present under the `test/` folder an can be run with the `npm test` command.
+
+
+Posssible Improvements in the future:
+-------------------------------------
+- The errors can be displayed on the UI (in response to a `FETCH_PRODUCTS_FAILURE` action)
+- Unit tests for React components (possibly using a libray like Enzyme)
+- Currenlty new items are loaded only as the user scoll hits the bottom. The load can happen as the user scolls towards the page bottom instead of waiting for the scrollbar to hit the end.
+
